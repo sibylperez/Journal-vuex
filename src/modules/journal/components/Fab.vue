@@ -1,12 +1,19 @@
 <template>
     <button class="btn btn-success">
-        <i class="fa fa-1x fa-plus"></i>
+        <i class="fa fa-1x"
+            :class="icon"></i>
         
     </button>
 </template>
 
 <script>
 export default {
+    props: {
+        icon: {
+            type: String,
+            default: 'fa-plus'
+        }
+    }
 
 }
 </script>
@@ -16,8 +23,8 @@ button {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 100%;
 }
 </style>

@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from '@vue/runtime-core'
+import { defineAsyncComponent } from 'vue'
 export default {
     components: {
         Entry: defineAsyncComponent(() => import('./Entry.vue'))
@@ -29,7 +29,7 @@ export default {
 }
 .entry-scrollarea{
     height: calc( 100vh - 110px);
-    //overflow: scroll;
+    overflow: scroll;
 }
 
 input{
