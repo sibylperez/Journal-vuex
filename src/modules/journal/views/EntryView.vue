@@ -1,9 +1,9 @@
 <template>
   <div class="entry-title d-flex justify-content-between p-2">
     <div>
-        <span class="text-success fs-3 fw-bold">11</span>
-        <span class="mx-1 fs-3">November</span>
-        <span class="mx-1 fs-4 fw-light">2022, friday</span>
+        <span class="text-success fs-3 fw-bold">{{ day }}</span>
+        <span class="mx-1 fs-3">{{ month }}</span>
+        <span class="mx-1 fs-4 fw-light">{{ yearDay }}</span>
     </div>
 
     <div>
@@ -22,7 +22,8 @@
   <hr>
   <div class="d-flex flex-column px-3 h-75">
     <textarea name="" id="" cols="30" rows="10"
-            placeholder="Tell me your point of view today"    
+            placeholder="Tell me your point of view today" 
+            v-model="entry.text"   
     ></textarea>
   </div>
   <Fab icon='fa-save'/>
@@ -31,9 +32,48 @@
 
 <script>
 import { defineAsyncComponent } from 'vue'
+import { mapGetters } from 'vuex'
+import  getTodayDate from '../components/helpers/getTodayDate'
+
 export default {
+    props: {
+        id: {
+            type: String,
+            required: true
+        }
+    },
+    data (){
+        return {
+            entry: null
+        }
+    },
     components: {
         Fab: defineAsyncComponent(() => import('../components/Fab.vue'))
+    },
+    computed: {
+        ...mapGetters('journal', ['getEntriesById']),
+        day(){
+            const { day } = getTodayDate(this.entry.date)
+            return day
+        },
+        month(){
+            const { month } = getTodayDate(this.entry.date)
+            return month
+        },
+        yearDay(){
+            const { yearDay } = getTodayDate(this.entry.date)
+            return yearDay
+        }
+    },
+    methods: {
+        loadEntry(){
+            const entry = this.getEntriesById(this.id)
+            if (!entry) this.$router.push({ name: 'no-entry'})
+            this.entry = entry
+        }
+    },
+    created() {
+        this.loadEntry()
     }
 }
 </script>
@@ -44,6 +84,7 @@ textarea {
     font-size: 20px;
     border: none;
     height: 92%;
+    background-color: aliceblue;
 
     &:focus{
         outline: none;
