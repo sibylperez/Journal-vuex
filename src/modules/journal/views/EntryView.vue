@@ -1,5 +1,6 @@
 <template>
-  <div class="entry-title d-flex justify-content-between p-2">
+    <template v-if="entry">
+  <div  class="entry-title d-flex justify-content-between p-2">
     <div>
         <span class="text-success fs-3 fw-bold">{{ day }}</span>
         <span class="mx-1 fs-3">{{ month }}</span>
@@ -7,7 +8,9 @@
     </div>
 
     <div>
-        <button class="btn btn-info mx-2">
+        <button v-if="entry.id"
+            class="btn btn-info mx-2"
+            @click="deleteEntryId">
             Delete
             <i class="fa fa-trash-alt"></i>
         </button>
@@ -26,13 +29,15 @@
             v-model="entry.text"   
     ></textarea>
   </div>
-  <Fab icon='fa-save'/>
   <img src="https://www.robertlandscapes.com/wp-content/uploads/2014/11/landscape-322100_1280.jpg" alt="entry-picture" class="img-thumbnail">
+</template>
+  <Fab icon='fa-save'
+        @on:click="saveEntry"/>
 </template>
 
 <script>
 import { defineAsyncComponent } from 'vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import  getTodayDate from '../components/helpers/getTodayDate'
 
 export default {
@@ -66,14 +71,43 @@ export default {
         }
     },
     methods: {
+        ...mapActions('journal', ['updatedEntry', 'createEntry', 'deleteEntry']),
+
         loadEntry(){
-            const entry = this.getEntriesById(this.id)
-            if (!entry) this.$router.push({ name: 'no-entry'})
+            let entry
+            if(this.id === 'new') {
+                entry = {
+                    text: 'Tell me your point of view today...',
+                    date: new Date().getTime()
+                }
+            } else {
+                entry = this.getEntriesById(this.id)
+                if (!entry) return this.$router.push({ name: 'no-entry'})
+
+            }
             this.entry = entry
+        },
+        async saveEntry(){
+            if(this.entry.id){
+                await this.updatedEntry(this.entry)
+            } else {
+                const id = await this.createEntry(this.entry)
+                this.$router.push({ name: 'entry', params: { id }})
+            }
+            
+        },
+        async deleteEntryId() {
+            await this.deleteEntry(this.entry.id)
+            this.$router.push({ name: 'no-entry'})
         }
     },
     created() {
         this.loadEntry()
+    },
+    watch:{
+        id(){
+            this.loadEntry()
+        }
     }
 }
 </script>
