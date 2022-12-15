@@ -28,6 +28,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 
 
+### Deploy
+https://journal-spr.netlify.app/
 
 ## 
 <b>Instructor:</b> Fernando Herrera
